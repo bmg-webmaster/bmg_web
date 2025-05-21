@@ -1,204 +1,132 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <title>Editor Modal</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editor de Configuración del Modal</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
-<body class="p-4">
-  <div class="container">
+<body class="bg-light">
+  <div class="container py-5">
     <h1 class="mb-4">Editor de Modal de Bienvenida</h1>
-
-    <form id="modalForm">
-      <div class="form-check mb-3">
+    <form id="configForm">
+      <div class="form-check form-switch mb-3">
         <input class="form-check-input" type="checkbox" id="habilitado">
-        <label class="form-check-label" for="habilitado">Habilitar Modal</label>
+        <label class="form-check-label" for="habilitado">Modal habilitado</label>
+      </div>
+
+      <div class="form-check form-switch mb-3">
+        <input class="form-check-input" type="checkbox" id="titleHabilitado">
+        <label class="form-check-label" for="titleHabilitado">Título habilitado</label>
+      </div>
+      <div class="mb-3">
+        <label for="titleValor" class="form-label">Título</label>
+        <input type="text" class="form-control" id="titleValor">
+      </div>
+
+      <div class="form-check form-switch mb-3">
+        <input class="form-check-input" type="checkbox" id="textHabilitado">
+        <label class="form-check-label" for="textHabilitado">Texto habilitado</label>
+      </div>
+      <div class="mb-3">
+        <label for="textValor" class="form-label">Texto</label>
+        <input type="text" class="form-control" id="textValor">
       </div>
 
       <div class="mb-3">
-        <label for="title" class="form-label">Título</label>
-        <input class="form-check-input me-2" type="checkbox" id="titleHabilitado"> Activar
-        <input type="text" class="form-control mt-2" id="title">
+        <label for="imageUrl" class="form-label">URL de imagen</label>
+        <input type="text" class="form-control" id="imageUrl">
       </div>
-
       <div class="mb-3">
-        <label for="text" class="form-label">Texto</label>
-        <input class="form-check-input me-2" type="checkbox" id="textHabilitado"> Activar
-        <input type="text" class="form-control mt-2" id="text">
+        <label for="imageLink" class="form-label">Enlace de la imagen (opcional)</label>
+        <input type="url" class="form-control" id="imageLink">
       </div>
-
       <div class="mb-3">
-        <label class="form-label">Imagen</label>
-        <input type="text" class="form-control mb-2" id="imageUrl" placeholder="URL de la imagen">
-        <input type="file" class="form-control" id="imageUpload">
-        <div class="mt-2">
-          <img id="previewImage" src="" alt="Vista previa" class="img-thumbnail" style="max-height: 200px;">
-        </div>
+        <label for="imageWidth" class="form-label">Ancho de la imagen</label>
+        <input type="number" class="form-control" id="imageWidth">
       </div>
-
-      <div class="row mb-3">
-        <div class="col">
-          <label for="imageWidth" class="form-label">Ancho (px)</label>
-          <input type="number" class="form-control" id="imageWidth">
-        </div>
-        <div class="col">
-          <label for="imageHeight" class="form-label">Alto (px)</label>
-          <input type="number" class="form-control" id="imageHeight">
-        </div>
-      </div>
-
       <div class="mb-3">
-        <label for="imageAlt" class="form-label">Alt de la imagen</label>
+        <label for="imageHeight" class="form-label">Alto de la imagen</label>
+        <input type="number" class="form-control" id="imageHeight">
+      </div>
+      <div class="mb-3">
+        <label for="imageAlt" class="form-label">Texto alternativo</label>
         <input type="text" class="form-control" id="imageAlt">
       </div>
-
       <div class="mb-3">
         <label for="confirmButtonText" class="form-label">Texto del botón</label>
         <input type="text" class="form-control" id="confirmButtonText">
       </div>
-
-      <button type="submit" class="btn btn-primary">Guardar cambios</button>
+      <button type="submit" class="btn btn-primary">Guardar configuración</button>
     </form>
   </div>
 
   <script>
-    let token = "";
+    let token = '';
+    let repo = 'bmg-webmaster/bmg_web';
+    let path = 'configuracion.json';
 
-    async function pedirToken() {
-      const { value } = await Swal.fire({
-        title: 'Ingresa tu token de GitHub',
+    async function solicitarToken() {
+      const { value: userToken } = await Swal.fire({
+        title: 'Token de GitHub',
         input: 'password',
-        inputLabel: 'Personal Access Token',
-        inputPlaceholder: 'ghp_...',
+        inputLabel: 'Introduce tu token personal',
+        inputPlaceholder: 'ghp_xxx...',
         inputAttributes: {
           autocapitalize: 'off',
           autocorrect: 'off'
         },
-        showCancelButton: false,
-        confirmButtonText: 'Continuar',
-        allowOutsideClick: false
+        showCancelButton: false
       });
-
-      token = value;
-      cargarConfiguracion();
+      if (userToken) {
+        token = userToken;
+        cargarConfiguracion();
+      }
     }
 
     async function cargarConfiguracion() {
-      const response = await fetch('https://raw.githubusercontent.com/bmg-webmaster/bmg_web/main/configuracion.json');
-      const json = await response.json();
-      const m = json.modalBienvenida;
+      const res = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
+        headers: {
+          Authorization: `token ${token}`
+        }
+      });
+      const data = await res.json();
+      const contenido = atob(data.content);
+      const config = JSON.parse(contenido);
 
+      const m = config.modalBienvenida;
       document.getElementById('habilitado').checked = m.habilitado;
       document.getElementById('titleHabilitado').checked = m.title.habilitado;
-      document.getElementById('title').value = m.title.valor;
+      document.getElementById('titleValor').value = m.title.valor;
       document.getElementById('textHabilitado').checked = m.text.habilitado;
-      document.getElementById('text').value = m.text.valor;
+      document.getElementById('textValor').value = m.text.valor;
       document.getElementById('imageUrl').value = m.imageUrl;
+      document.getElementById('imageLink').value = m.imageLink || '';
       document.getElementById('imageWidth').value = m.imageWidth;
       document.getElementById('imageHeight').value = m.imageHeight;
       document.getElementById('imageAlt').value = m.imageAlt;
       document.getElementById('confirmButtonText').value = m.confirmButtonText;
 
-      document.getElementById('previewImage').src = m.imageUrl;
+      // Guarda sha para actualizar
+      document.getElementById('configForm').dataset.sha = data.sha;
     }
 
-    async function guardarConfiguracion(data) {
-      const filePath = 'configuracion.json';
-      const repo = 'bmg_web';
-      const owner = 'bmg-webmaster';
-
-      const getRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: 'application/vnd.github.v3+json'
-        }
-      });
-      const getData = await getRes.json();
-
-      const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
-      const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`, {
-        method: 'PUT',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: 'application/vnd.github.v3+json'
-        },
-        body: JSON.stringify({
-          message: "Actualizar configuración modal",
-          content: encoded,
-          sha: getData.sha
-        })
-      });
-
-      if (res.ok) {
-        Swal.fire("¡Guardado!", "La configuración fue actualizada.", "success");
-      } else {
-        Swal.fire("Error", "Hubo un problema al guardar.", "error");
-      }
-    }
-
-    document.getElementById('imageUpload').addEventListener('change', async function (e) {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onloadend = async () => {
-        const content = reader.result.split(',')[1]; // base64
-
-        const imagePath = `images/modal/${file.name}`;
-        const repo = 'bmg_web';
-        const owner = 'bmg-webmaster';
-
-        // Intenta obtener SHA para actualizar si ya existe
-        let sha = null;
-        try {
-          const getRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${imagePath}`, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          const getData = await getRes.json();
-          sha = getData.sha;
-        } catch {}
-
-        const uploadRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${imagePath}`, {
-          method: 'PUT',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: 'application/vnd.github.v3+json'
-          },
-          body: JSON.stringify({
-            message: `Subir imagen ${file.name}`,
-            content: content,
-            ...(sha && { sha })
-          })
-        });
-
-        if (uploadRes.ok) {
-          const rawUrl = `https://raw.githubusercontent.com/${owner}/${repo}/main/${imagePath}`;
-          document.getElementById('imageUrl').value = rawUrl;
-          document.getElementById('previewImage').src = rawUrl;
-          Swal.fire("Imagen subida", "Se cargó correctamente al repositorio.", "success");
-        } else {
-          Swal.fire("Error", "No se pudo subir la imagen.", "error");
-        }
-      };
-      reader.readAsDataURL(file);
-    });
-
-    document.getElementById('modalForm').addEventListener('submit', function (e) {
+    document.getElementById('configForm').addEventListener('submit', async function (e) {
       e.preventDefault();
-
       const config = {
         modalBienvenida: {
           habilitado: document.getElementById('habilitado').checked,
           title: {
             habilitado: document.getElementById('titleHabilitado').checked,
-            valor: document.getElementById('title').value
+            valor: document.getElementById('titleValor').value
           },
           text: {
             habilitado: document.getElementById('textHabilitado').checked,
-            valor: document.getElementById('text').value
+            valor: document.getElementById('textValor').value
           },
           imageUrl: document.getElementById('imageUrl').value,
+          imageLink: document.getElementById('imageLink').value,
           imageWidth: parseInt(document.getElementById('imageWidth').value),
           imageHeight: parseInt(document.getElementById('imageHeight').value),
           imageAlt: document.getElementById('imageAlt').value,
@@ -206,10 +134,31 @@
         }
       };
 
-      guardarConfiguracion(config);
+      const sha = this.dataset.sha;
+      const contenidoCodificado = btoa(JSON.stringify(config, null, 2));
+
+      const response = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `token ${token}`
+        },
+        body: JSON.stringify({
+          message: 'Actualización desde editor.html',
+          content: contenidoCodificado,
+          sha: sha
+        })
+      });
+
+      if (response.ok) {
+        Swal.fire('¡Éxito!', 'El archivo fue actualizado en GitHub.', 'success');
+        cargarConfiguracion();
+      } else {
+        Swal.fire('Error', 'No se pudo actualizar el archivo.', 'error');
+      }
     });
 
-    pedirToken();
+    solicitarToken();
   </script>
 </body>
 </html>
