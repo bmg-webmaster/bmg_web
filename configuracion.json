@@ -1,6 +1,6 @@
 {
   "modalBienvenida": {
-    "habilitado": true,
+    "habilitado": false,
     "title": {
       "habilitado": false,
       "valor": "Texto"
