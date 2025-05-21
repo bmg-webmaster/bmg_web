@@ -1239,7 +1239,7 @@
         Swal.fire({
           title: modal.title?.habilitado ? modal.title.valor : undefined,
           text: modal.text?.habilitado ? modal.text.valor : undefined,
-          imageUrl: 'https://drive.google.com/uc?export=view&id=1GSIL17eIuSCKWWepHEp2Jt3Olat79gID',
+          imageUrl: modal.imageUrl || '',
           imageWidth: modal.imageWidth || 300,
           imageHeight: modal.imageHeight || 200,
           imageAlt: modal.imageAlt || '',
