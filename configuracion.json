@@ -9,9 +9,9 @@
       "habilitado": false,
       "valor": "Texto"
     },
-    "imageUrl": "hhhhh",
+    "imageUrl": "images/imagen_modal.jpg",
     "imageWidth": 500,
-    "imageHeight": 400,
+    "imageHeight": 500,
     "imageAlt": "Imagen de bienvenida",
     "confirmButtonText": "Continuar"
   }
