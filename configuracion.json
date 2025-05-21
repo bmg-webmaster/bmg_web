@@ -1,0 +1,18 @@
+{
+  "modalBienvenida": {
+    "habilitado": true,
+    "title": {
+      "habilitado": false,
+      "valor": "Texto"
+    },
+    "text": {
+      "habilitado": false,
+      "valor": "Texto"
+    },
+    "imageUrl": "https://beefmastergold.com/images/web_image.webp",
+    "imageWidth": 500,
+    "imageHeight": 400,
+    "imageAlt": "Imagen de bienvenida",
+    "confirmButtonText": "Continuar"
+  }
+}
