@@ -1701,18 +1701,20 @@ li {
   position: fixed;
   right: 30px;
   bottom: 30px;
-  width: 25vw;
-  max-width: 400px;
-  min-width: 300px;
+  width: 100%;
+  height: 100px;
+  max-width: 100px;
+  min-width: 50px;
   z-index: 9999;
   cursor: pointer;
   pointer-events: all;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   animation: zoom-in-out 1.5s infinite ease-in-out;
 }
 
 .boton-whatsapp:hover {
-  filter: drop-shadow(0 0 1rem #e52622);
+  max-width: 300px;
+  filter: drop-shadow(0 0 1rem #37b654);
   content: url('../images/wa_1.webp');
 }
 
