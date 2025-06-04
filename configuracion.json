@@ -11,8 +11,8 @@
     },
     "imageUrl": "https://raw.githubusercontent.com/bmg-webmaster/bmg_web/main/assets/images/@beefmastergold.jpg",
     "imageLink": "https://beefmastergold.com/products.html",
-    "imageWidth": 1080,
-    "imageHeight": 1920,
+    "imageWidth": 1000,
+    "imageHeight": 500,
     "imageAlt": "Imagen de bienvenida",
     "confirmButtonText": "Continuar"
   }
