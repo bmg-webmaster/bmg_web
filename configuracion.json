@@ -9,10 +9,10 @@
       "habilitado": false,
       "valor": "Texto"
     },
-    "imageUrl": "https://raw.githubusercontent.com/bmg-webmaster/bmg_web/main/assets/images/@beefmastergold (500 x 500 px).jpg",
+    "imageUrl": "https://raw.githubusercontent.com/bmg-webmaster/bmg_web/main/assets/images/@beefmastergold.jpg",
     "imageLink": "https://beefmastergold.com/products.html",
-    "imageWidth": 500,
-    "imageHeight": 500,
+    "imageWidth": 1080,
+    "imageHeight": 1920,
     "imageAlt": "Imagen de bienvenida",
     "confirmButtonText": "Continuar"
   }
