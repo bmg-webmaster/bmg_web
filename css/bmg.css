@@ -3102,6 +3102,7 @@ li {
   display: flex;
   position: relative;
   overflow: hidden;
+  border-radius: 5vw;
 }
 
 .recipe_img {
@@ -3204,13 +3205,17 @@ li {
 
 .recipe_hero {
   width: 100%;
-  background-color: #ffffff;
   flex-direction: column;
   align-items: center;
   margin-bottom: -100vh;
   padding-top: 10vw;
   padding-bottom: 0;
   display: flex;
+  background-image: url(../images/bg_product.webp);
+  background-size: contain;
+  background-position: center;
+  background-repeat: repeat;
+  overflow: visible;
 }
 
 .collection-item {
